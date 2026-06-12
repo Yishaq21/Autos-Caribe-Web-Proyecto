@@ -20,7 +20,7 @@ Facilitar la publicación, búsqueda y consulta de vehículos mediante una plata
 
 - Isaac Guevara Mora
 - Ian Mejias Picado
-- 
+- Miguel Aguilar Brenes
 - 
 
 ## Roles del Sistema
