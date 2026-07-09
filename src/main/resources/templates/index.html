@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body class="bg-light">
+
+        <!-- Cargamos el menú superior -->
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <div class="container mt-5 text-center">
+            <div class="card shadow p-5">
+                <h1 class="display-4 text-primary"><i class="fa-solid fa-car-side"></i> ¡Bienvenido a Autos Caribe!</h1>
+                <p class="lead mt-3">Has iniciado sesión correctamente. Aquí se integrará el Catálogo.</p>
+
+                <div class="mt-4" th:if="${session.esAdmin != null and session.esAdmin}">
+                    <a th:href="@{/usuario/listado}" class="btn btn-primary btn-lg mx-2">
+                        <i class="fa-solid fa-users"></i> Ir a Gestión de Usuarios
+                    </a>
+                    <a th:href="@{/rol/listado}" class="btn btn-success btn-lg mx-2">
+                        <i class="fa-solid fa-id-badge"></i> Ir a Gestión de Roles
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cargamos el pie de página -->
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+    </body>
+</html>

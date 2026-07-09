@@ -8,19 +8,18 @@ import com.autoscaribe.domain.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
-import java.util.Optional;
 /**
  *
  * @author Isaac
  */
+
+// gestion de datos de los usuarios
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
-
-    public Optional<Usuario> findByUsername(String username);
-
+    
+    // Consulta para buscar si está activo
     public List<Usuario> findByActivoTrue();
-
-    public boolean existsByUsername(String username);
-
-    public boolean existsByCorreo(String correo);
+    
+  
+    public Usuario findByUsername(String username); // busca un usuario por su nombre de usuario
 }

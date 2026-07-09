@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author Isaac
  */
+
+// puente entre el controlador y el reporsitorio, para la gestion de roles
 @Service
 public class RolService {
 
@@ -29,18 +31,18 @@ public class RolService {
         return rolRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) 
     public Optional<Rol> getRol(Integer idRol) {
         return rolRepository.findById(idRol);
     }
 
     @Transactional
-    public void save(Rol rol) {
+    public void save(Rol rol) { // guarda y actualiza el rol en la BD
         rolRepository.save(rol);
     }
 
     @Transactional
-    public void delete(Integer idRol) {
+    public void delete(Integer idRol) { // elimina el rol
         if (!rolRepository.existsById(idRol)) {
             throw new IllegalArgumentException("El rol con ID " + idRol + " no existe!");
         }
