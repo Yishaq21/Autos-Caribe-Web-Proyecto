@@ -49,6 +49,11 @@
                                 <a class="nav-link btn btn-outline-light btn-sm px-3" th:href="@{/login}">Iniciar Sesión</a>
                             </li>
                             <li class="nav-item" th:if="${session.usuarioLogueado != null}">
+                                <a class="nav-link" th:href="@{/solicitud/listado}">
+                                    <i class="fa-solid fa-paper-plane"></i> Solicitudes
+                                </a>
+                            </li>
+                            <li class="nav-item" th:if="${session.usuarioLogueado != null}">
                                 <a class="nav-link text-warning fw-bold" th:href="@{/logout}">
                                     <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión ([[${session.usuarioLogueado.username}]])
                                 </a>

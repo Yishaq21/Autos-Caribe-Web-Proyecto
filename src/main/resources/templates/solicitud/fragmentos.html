@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+
+    <body>
+        <!-- 1. Fragmento para enviar una solicitud -->
+        <section th:fragment="agregar">
+            <div class='row py-4 mb-2 bg-light'>
+                <div class='col-md-1'></div>
+                <div class='col-md-3'>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarSolicitudModal">
+                        <i class="fa-solid fa-plus"></i> [[#{solicitud.agregar}]]
+                    </button>
+                </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="agregarSolicitudModal" tabindex="-1" aria-labelledby="agregarSolicitudLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info text-white">
+                            <h1 class="modal-title fs-5" id="agregarSolicitudLabel">
+                                <i class="fa-solid fa-paper-plane"></i> [[#{solicitud.agregar}]]</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form th:action="@{/solicitud/guardar}" th:object="${solicitud}" class="was-validated" method="post">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label>[[#{solicitud.vehiculo}]]</label>
+                                    <select name="vehiculo.idVehiculo" class="form-select" required="true">
+                                        <option value="">-- [[#{solicitud.seleccione}]] --</option>
+                                        <option th:each="v : ${vehiculos}" th:value="${v.idVehiculo}"
+                                                th:text="${v.marca} + ' ' + ${v.modelo} + ' (' + ${v.anio} + ')'"></option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>[[#{solicitud.vendedor}]]</label>
+                                    <select name="vendedor.idUsuario" class="form-select" required="true">
+                                        <option value="">-- [[#{solicitud.seleccione}]] --</option>
+                                        <option th:each="ve : ${vendedores}" th:value="${ve.idUsuario}"
+                                                th:text="${ve.nombre} + ' ' + ${ve.apellidos}"></option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>[[#{solicitud.mensaje}]]</label>
+                                    <textarea name="mensaje" maxlength="500" rows="4" class="form-control" required="true"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-paper-plane"></i> [[#{solicitud.enviar}]]
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Fragmento para el listado de solicitudes -->
+        <section th:fragment="listado" class="p-3">
+            <div class="row p-3">
+                <div class="col-md-9">
+                    <div class="card p-2">
+                        <div class="card-header"><h4>[[#{solicitud.listado}]]</h4></div>
+                        <div class="card-body">
+                            <div th:if="${solicitudes != null and !solicitudes.empty}">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>[[#{solicitud.vehiculo}]]</th>
+                                            <th>[[#{solicitud.cliente}]]</th>
+                                            <th>[[#{solicitud.vendedor}]]</th>
+                                            <th>[[#{solicitud.estado}]]</th>
+                                            <th>[[#{solicitud.fecha}]]</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="s : ${solicitudes}">
+                                            <td>[[${s.idSolicitud}]]</td>
+                                            <td>[[${s.vehiculo.marca}]] [[${s.vehiculo.modelo}]]</td>
+                                            <td>[[${s.cliente.nombre}]] [[${s.cliente.apellidos}]]</td>
+                                            <td>[[${s.vendedor.nombre}]] [[${s.vendedor.apellidos}]]</td>
+                                            <td>
+                                                <span class="badge bg-warning" th:if="${s.estado == 'PENDIENTE'}">[[${s.estado}]]</span>
+                                                <span class="badge bg-success" th:if="${s.estado == 'ACEPTADA'}">[[${s.estado}]]</span>
+                                                <span class="badge bg-danger" th:if="${s.estado == 'RECHAZADA'}">[[${s.estado}]]</span>
+                                            </td>
+                                            <td>[[${s.fechaSolicitud}]]</td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger"
+                                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                        th:data-bs-id="${s.idSolicitud}"
+                                                        th:data-bs-descripcion="${s.vehiculo.marca} + ' ' + ${s.vehiculo.modelo}">
+                                                    <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                                                </button>
+                                                <a th:href="@{/solicitud/modificar/} + ${s.idSolicitud}" class="btn btn-warning">
+                                                    <i class="fas fa-pencil-alt"></i> [[#{accion.actualizar}]]
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center p-2" th:if="${solicitudes == null or solicitudes.empty}">
+                                <span>[[#{lista.vacia}]]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center bg-success text-white mb-3">
+                        <div class="card-body"><h3>[[#{solicitud.total}]]</h3>
+                            <h4 class="fs-2"><i class="fas fa-envelope-open-text"></i> [[${totalSolicitudes}]]</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Fragmento para editar/actualizar estado de una solicitud -->
+        <section th:fragment="editar">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <form method="POST" th:action="@{/solicitud/guardar}" th:object="${solicitud}" class="was-validated">
+                        <input type="hidden" name="idSolicitud" th:field="*{idSolicitud}"/>
+                        <input type="hidden" name="cliente.idUsuario" th:field="*{cliente.idUsuario}"/>
+                        <input type="hidden" name="vendedor.idUsuario" th:field="*{vendedor.idUsuario}"/>
+                        <input type="hidden" name="vehiculo.idVehiculo" th:field="*{vehiculo.idVehiculo}"/>
+                        <input type="hidden" name="fechaSolicitud" th:field="*{fechaSolicitud}"/>
+
+                        <div class="row py-4 mb-4 bg-light">
+                            <div class="col-md-4 d-grid">
+                                <a th:href="@{/solicitud/listado}" class="btn btn-primary">
+                                    <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
+                                </a>
+                            </div>
+                            <div class="col-md-4 d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-header"><h4>[[#{accion.actualizar}]] - [[#{solicitud.listado}]]</h4></div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label>[[#{solicitud.vehiculo}]]</label>
+                                            <input type="text" class="form-control" disabled="disabled"
+                                                   th:value="${solicitud.vehiculo.marca} + ' ' + ${solicitud.vehiculo.modelo}"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>[[#{solicitud.cliente}]]</label>
+                                            <input type="text" class="form-control" disabled="disabled"
+                                                   th:value="${solicitud.cliente.nombre} + ' ' + ${solicitud.cliente.apellidos}"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>[[#{solicitud.mensaje}]]</label>
+                                            <textarea name="mensaje" th:field="*{mensaje}" maxlength="500" rows="4" class="form-control" required="true"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>[[#{solicitud.estado}]]</label>
+                                            <select name="estado" th:field="*{estado}" class="form-select">
+                                                <option value="PENDIENTE">Pendiente</option>
+                                                <option value="ACEPTADA">Aceptada</option>
+                                                <option value="RECHAZADA">Rechazada</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Fragmento para confirmar eliminación -->
+        <section th:fragment="confirmarEliminar">
+            <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered custom-modal-animation">
+                    <div class="modal-content animate-slide-up">
+                        <form th:action="@{/solicitud/eliminar}" method="post">
+                            <input type="hidden" name="idSolicitud" id="modalId"/>
+                            <div class="modal-header bg-warning text-white">
+                                <h5 class="modal-title" id="modalLabel">
+                                    <i class="fa-solid fa-circle-radiation"></i> [[#{accion.confirmar}]]
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>[[#{accion.confirmar.texto1}]] <span id="modalDescripcion"></span>?</p>
+                                <h6>[[#{accion.confirmar.texto2}]]</h6>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </body>
+</html>
