@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <body>
+         
+        <section th:fragment="agregar">
+            <div class="container mt-4">
+                <a th:href="@{/vehiculo/nuevo}" class="btn btn-primary">Agregar Vehículo</a>
+            </div>
+        </section>
+
+        <section th:fragment="listado">
+            <div class="container mt-4">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Categoría</th>
+                            <th>Año</th>
+                            <th>Precio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="v : ${vehiculos}">
+                            <td th:text="${v.marca}"></td>
+                            <td th:text="${v.modelo}"></td>
+                            <td th:text="${v.categoria}"></td>
+                            <td th:text="${v.año}"></td>
+                            <td th:text="${v.precio}"></td>
+                            <td>
+                                <a th:href="@{/vehiculo/modificar/} + ${v.idVehiculo}" class="btn btn-warning btn-sm">Editar</a>
+                                <form th:action="@{/vehiculo/eliminar}" method="post" style="display:inline;">
+                                    <input type="hidden" name="idVehiculo" th:value="${v.idVehiculo}"/>
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro?');">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+     
+        <section th:fragment="editar">
+            <div class="container mt-4">
+                <form th:action="@{/vehiculo/guardar}" th:object="${vehiculo}" method="post" class="p-4 border">
+                    <input type="hidden" th:field="*{idVehiculo}" />
+                    <div class="mb-3"><label>Marca:</label><input type="text" th:field="*{marca}" class="form-control" required/></div>
+                    <div class="mb-3"><label>Modelo:</label><input type="text" th:field="*{modelo}" class="form-control" required/></div>
+                    <div class="mb-3"><label>Categoría:</label><input type="text" th:field="*{categoria}" class="form-control"/></div>
+                    <div class="mb-3"><label>Año:</label><input type="number" th:field="*{año}" class="form-control"/></div>
+                    <div class="mb-3"><label>Precio:</label><input type="number" step="0.01" th:field="*{precio}" class="form-control"/></div>
+                    <div class="mb-3"><label>Descripción:</label><textarea th:field="*{descripcion}" class="form-control"></textarea></div>
+                    <div class="mb-3">
+                        <label>Imagen del vehículo:</label>
+                        <input type="text" th:field="*{rutaImagen}" class="form-control"
+                               placeholder="Ej. https://sitio.com/vehiculo.jpg o /images/vehiculo.jpg"/>
+                        <div class="form-text">
+                            Pegue la dirección de una imagen o use una imagen guardada en static/images.
+                        </div>
+                    </div>
+                    <div class="mb-3" th:if="${vehiculo.rutaImagen != null and !vehiculo.rutaImagen.isBlank()}">
+                        <label class="form-label">Vista previa:</label><br/>
+                        <img th:src="${vehiculo.rutaImagen}" alt="Vista previa del vehículo"
+                             class="img-thumbnail" style="max-height: 220px;"/>
+                    </div>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <a th:href="@{/vehiculo/listado}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </section>
+
+    </body>
+</html>

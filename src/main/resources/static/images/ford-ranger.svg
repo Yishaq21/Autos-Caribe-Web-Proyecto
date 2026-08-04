@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="480" viewBox="0 0 800 480">
+<rect width="800" height="480" fill="#f5f7fa"/>
+<rect y="330" width="800" height="150" fill="#e4e8ed"/>
+<text x="400" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#202938">Ford Ranger</text>
+<text x="400" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" fill="#596579">Pickup · Imagen local del catálogo</text>
+<g transform="translate(80,35)"><path d="M105 220 L155 165 H325 L370 205 H520 L555 245 H90 Z" fill="#d7dce2" stroke="#273142" stroke-width="6"/><rect x="350" y="178" width="150" height="30" rx="5" fill="#f3f5f7" stroke="#273142" stroke-width="5"/><circle cx="185" cy="252" r="44" fill="#202938"/><circle cx="185" cy="252" r="21" fill="#aeb7c2"/><circle cx="465" cy="252" r="44" fill="#202938"/><circle cx="465" cy="252" r="21" fill="#aeb7c2"/><rect x="105" y="225" width="35" height="12" rx="5" fill="#f0b429"/><rect x="515" y="225" width="28" height="12" rx="5" fill="#d9485f"/></g>
+<text x="400" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#6b7280">Autos Caribe</text>
+</svg>

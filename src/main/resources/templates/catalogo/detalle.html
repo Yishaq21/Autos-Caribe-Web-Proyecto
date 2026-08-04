@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+    <a class="btn btn-outline-secondary mb-4" th:href="@{/catalogo}"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+    <div class="card shadow border-0 overflow-hidden">
+        <div class="row g-0">
+            <div class="col-lg-6">
+                <img th:if="${vehiculo.rutaImagen != null and !vehiculo.rutaImagen.isBlank()}"
+                     th:src="${vehiculo.rutaImagen}" class="w-100 h-100" style="min-height:380px;object-fit:cover" alt="Vehículo">
+                <div th:unless="${vehiculo.rutaImagen != null and !vehiculo.rutaImagen.isBlank()}"
+                     class="bg-secondary-subtle d-flex justify-content-center align-items-center h-100" style="min-height:380px">
+                    <i class="fa-solid fa-car-side fa-7x text-secondary"></i>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card-body p-4 p-lg-5">
+                    <span class="badge text-bg-dark mb-3" th:text="${vehiculo.categoria ?: 'Sin categoría'}"></span>
+                    <h1 class="display-6 fw-bold" th:text="${vehiculo.marca + ' ' + vehiculo.modelo}"></h1>
+                    <p class="fs-5"><strong>Año:</strong> <span th:text="${vehiculo.año ?: 'No indicado'}"></span></p>
+                    <p class="fs-3 fw-bold text-primary" th:text="${vehiculo.precio != null ? '₡' + #numbers.formatDecimal(vehiculo.precio, 0, 'COMMA', 2, 'POINT') : 'Consultar precio'}"></p>
+                    <hr>
+                    <h2 class="h5">Descripción</h2>
+                    <p class="text-muted" th:text="${vehiculo.descripcion != null and !vehiculo.descripcion.isBlank() ? vehiculo.descripcion : 'No hay descripción disponible.'}"></p>
+
+                    <div th:if="${session.usuarioLogueado != null}" class="d-grid mt-4">
+                        <a class="btn btn-primary btn-lg" th:href="@{/solicitud/listado(idVehiculo=${vehiculo.idVehiculo})}"><i class="fa-solid fa-paper-plane"></i> Solicitar información</a>
+                    </div>
+                    <div th:unless="${session.usuarioLogueado != null}" class="alert alert-warning mt-4">
+                        Debes <a th:href="@{/login}">iniciar sesión</a> para enviar una solicitud.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+</body>
+</html>
