@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="480" viewBox="0 0 800 480">
+<rect width="800" height="480" fill="#f5f7fa"/>
+<rect y="330" width="800" height="150" fill="#e4e8ed"/>
+<text x="400" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#202938">Nissan Kicks</text>
+<text x="400" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" fill="#596579">SUV · Imagen local del catálogo</text>
+<g transform="translate(80,35)"><path d="M80 235 L120 185 L185 135 H385 L455 185 L530 205 L565 250 H70 Z" fill="#d7dce2" stroke="#273142" stroke-width="6"/><path d="M195 148 H375 L430 188 H155 Z" fill="#a9c7df" stroke="#273142" stroke-width="5"/><circle cx="185" cy="252" r="44" fill="#202938"/><circle cx="185" cy="252" r="21" fill="#aeb7c2"/><circle cx="465" cy="252" r="44" fill="#202938"/><circle cx="465" cy="252" r="21" fill="#aeb7c2"/><rect x="105" y="225" width="35" height="12" rx="5" fill="#f0b429"/><rect x="515" y="225" width="28" height="12" rx="5" fill="#d9485f"/></g>
+<text x="400" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#6b7280">Autos Caribe</text>
+</svg>

@@ -1,9 +1,5 @@
 package com.autoscaribe.service;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 import com.autoscaribe.domain.Rol;
 import com.autoscaribe.repository.RolRepository;
 import java.util.List;
@@ -11,10 +7,7 @@ import java.util.Optional;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-/**
- *
- * @author Isaac
- */
+
 @Service
 public class RolService {
 
@@ -35,12 +28,12 @@ public class RolService {
     }
 
     @Transactional
-    public void save(Rol rol) {
+    public void save(Rol rol) { // guarda y actualiza el rol en la BD
         rolRepository.save(rol);
     }
 
     @Transactional
-    public void delete(Integer idRol) {
+    public void delete(Integer idRol) { // elimina el rol
         if (!rolRepository.existsById(idRol)) {
             throw new IllegalArgumentException("El rol con ID " + idRol + " no existe!");
         }
