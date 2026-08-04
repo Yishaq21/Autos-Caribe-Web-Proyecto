@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
 @Controller
 @RequestMapping("/usuario_rol")
 public class UsuarioRolController {
@@ -23,12 +24,14 @@ public class UsuarioRolController {
         this.rolService = rolService;
     }
 
+    // Pantalla principal: lista de usuarios activos para elegir a cuál editarle los roles
     @GetMapping("/mantenimiento")
     public String mantenimiento(Model model) {
         model.addAttribute("usuarios", usuarioService.getUsuarios(true));
         return "/usuario_rol/mantenimiento";
     }
 
+    // Al seleccionar un usuario, muestra sus roles actuales y todos los roles disponibles
     @PostMapping("/consultar")
     public String consultar(@RequestParam Integer idUsuario, Model model) {
         var usuarioOpt = usuarioService.getUsuario(idUsuario);
@@ -42,6 +45,7 @@ public class UsuarioRolController {
         return "/usuario_rol/mantenimiento";
     }
 
+    // Reemplaza los roles del usuario por los que se marcaron en el formulario
     @PostMapping("/guardar")
     public String guardar(@RequestParam Integer idUsuario,
                           @RequestParam(required = false) List<Integer> idRoles,

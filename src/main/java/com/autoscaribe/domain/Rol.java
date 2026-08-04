@@ -1,11 +1,15 @@
 package com.autoscaribe.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Data;
+import lombok.ToString;
+
+
+
 @Data
 @Entity
 @Table(name = "rol")
@@ -18,11 +22,11 @@ public class Rol implements Serializable {
     @Column(name = "id_rol")
     private Integer idRol;
 
-    @NotEmpty // no permite strings vacios
-    @Size(max = 20)
-    @Column(name = "rol", unique = true, nullable = false, length = 20)
-    private String nombre;
+    @NotBlank
+    @Column(name = "rol", unique = true, length = 20)
+    private String rol;
 
+    @ToString.Exclude
     @ManyToMany(mappedBy = "roles")
-    private List<Usuario> usuarios;
+    private Set<Usuario> usuarios = new HashSet<>();
 }

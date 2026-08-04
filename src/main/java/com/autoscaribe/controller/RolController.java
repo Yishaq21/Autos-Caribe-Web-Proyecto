@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controlador para que el ADMINISTRADOR gestione roles 
+ */
 @Controller
 @RequestMapping("/rol")
 public class RolController {
@@ -39,7 +42,8 @@ public class RolController {
     @PostMapping("/guardar")
     public String guardar(@Valid Rol rol, RedirectAttributes redirectAttributes) {
         rolService.save(rol);
-        redirectAttributes.addFlashAttribute("todoOk", messageSource.getMessage("mensaje.actualizado", null, Locale.getDefault()));
+        redirectAttributes.addFlashAttribute("todoOk",
+                messageSource.getMessage("mensaje.actualizado", null, Locale.getDefault()));
         return "redirect:/rol/listado";
     }
 
@@ -49,13 +53,7 @@ public class RolController {
         String detalle = "mensaje.eliminado";
         try {
             rolService.delete(idRol);
-        } catch (IllegalArgumentException e) {
-            titulo = "error";
-            detalle = "error"; // uso error generico
-        } catch (IllegalStateException e) {
-            titulo = "error";
-            detalle = "error";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             titulo = "error";
             detalle = "error";
         }
