@@ -1,4 +1,3 @@
-
 package com.autoscaribe.controller;
 
 import com.autoscaribe.domain.Usuario;
@@ -30,16 +29,17 @@ public class AuthController {
     // Muestra el formulario de registro
     @GetMapping("/registro")
     public String nuevo(Model model) {
-        model.addAttribute("usuarioForm", new Usuario());
+        // Cambiamos "usuarioForm" por "usuario"
+        model.addAttribute("usuario", new Usuario());
         return "auth/registro";
     }
 
-    // Procesa el formulario de registro: crea el usuario con rol CLIENTE
+    // Procesa el formulario de registro
     @PostMapping("/registro/guardar")
-    public String guardar(@Valid @ModelAttribute("usuarioForm") Usuario usuario,
-                           BindingResult bindingResult,
-                           RedirectAttributes redirectAttributes,
-                           Model model) {
+    public String guardar(@Valid @ModelAttribute("usuario") Usuario usuario,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Model model) {
         if (bindingResult.hasErrors()) {
             return "auth/registro";
         }
@@ -51,5 +51,10 @@ public class AuthController {
             model.addAttribute("error", e.getMessage());
             return "auth/registro";
         }
+    }
+
+    @GetMapping("/acceso_denegado")
+    public String accesoDenegado() {
+        return "auth/acceso_denegado";
     }
 }

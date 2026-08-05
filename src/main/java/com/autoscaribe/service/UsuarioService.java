@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service // gestion de usuarios
 public class UsuarioService {
 
@@ -47,15 +46,17 @@ public class UsuarioService {
         if (usuarioRepository.existsByUsernameOrCorreo(usuario.getUsername(), usuario.getCorreo())) {
             throw new DataIntegrityViolationException("El usuario o correo ya está en uso.");
         }
-        // Se encripta el password antes de guardar 
+        
+        // 1. Se encripta el password antes de guardar 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuario.setActivo(true);
-        usuario = usuarioRepository.save(usuario);
 
-        // Le asigna el rol CLIENTE por defecto 
+        // 2. Le asigna el rol CLIENTE por defecto ANTES de hacer el save
         Rol rolCliente = rolRepository.findByRol("CLIENTE")
                 .orElseThrow(() -> new IllegalStateException("El rol CLIENTE no existe. Créalo primero en /rol/listado."));
         usuario.getRoles().add(rolCliente);
+        
+        // 3. Se guarda en la base de datos una única vez con sus roles ya cargados
         usuarioRepository.save(usuario);
     }
 
