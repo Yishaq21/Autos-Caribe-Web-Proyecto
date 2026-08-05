@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
-    
     <head th:fragment="head">
         <title>Autos Caribe</title>
         <meta charset="UTF-8"/>
@@ -16,7 +16,7 @@
     </head>
 
     <body>
-        
+
         <header th:fragment="header">
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
                 <div class="container-fluid">
@@ -33,51 +33,55 @@
                                     <i class="fa-solid fa-car-side"></i> Catálogo
                                 </a>
                             </li>
-                            <li class="nav-item" th:if="${session.esAdmin != null and session.esAdmin}">
+                          
+                            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                                 <a class="nav-link" th:href="@{/vehiculo/listado}">
                                     <i class="fa-solid fa-warehouse"></i> Vehículos
                                 </a>
                             </li>
-                            <li class="nav-item" th:if="${session.esAdmin != null and session.esAdmin}">
+                            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                                 <a class="nav-link" th:href="@{/usuario/listado}">
                                     <i class="fa-solid fa-users"></i> Usuarios
                                 </a>
                             </li>
-                            <li class="nav-item" th:if="${session.esAdmin != null and session.esAdmin}">
+                            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                                 <a class="nav-link" th:href="@{/rol/listado}">
                                     <i class="fa-solid fa-id-badge"></i> Roles
                                 </a>
                             </li>
-                            <li class="nav-item" th:if="${session.esAdmin != null and session.esAdmin}">
+                            <!-- Nota: Si eliminaste la tabla usuario_rol, este menú podría ya no ser necesario -->
+                            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                                 <a class="nav-link" th:href="@{/usuario_rol/mantenimiento}">
                                     <i class="fa-solid fa-user-shield"></i> Permisos
                                 </a>
                             </li>
                         </ul>
                         <ul class="navbar-nav">
-                            <li class="nav-item" th:if="${session.usuarioLogueado == null}">
+                            <li class="nav-item" sec:authorize="isAnonymous()">
                                 <a class="nav-link btn btn-outline-light btn-sm px-3" th:href="@{/login}">Iniciar Sesión</a>
                             </li>
-                            <li class="nav-item" th:if="${session.usuarioLogueado != null}">
+                            <!-- Opcionalmente, podrías restringir las solicitudes a VENDEDOR o ADMIN -->
+                            <li class="nav-item" sec:authorize="isAuthenticated()">
                                 <a class="nav-link" th:href="@{/solicitud/listado}">
                                     <i class="fa-solid fa-paper-plane"></i> Solicitudes
                                 </a>
                             </li>
-                            <li class="nav-item" th:if="${session.usuarioLogueado != null}">
-                                <a class="nav-link text-warning fw-bold" th:href="@{/logout}">
-                                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión ([[${session.usuarioLogueado.username}]])
-                                </a>
+                            <li class="nav-item" sec:authorize="isAuthenticated()">
+                                <form th:action="@{/logout}" method="post" class="d-inline">
+                                    <button type="submit" class="nav-link btn btn-link text-warning fw-bold border-0" style="text-decoration:none;">
+                                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión (<span sec:authentication="name"></span>)
+                                    </button>
+                                </form>
                             </li>
                         </ul>
                     </div>
                 </div>
             </nav>
         </header>
-        
+
         <section th:fragment="mostrarToast">
             <div aria-live="polite" aria-atomic="true" class="position-fixed top-50 start-50 translate-middle" style="z-index: 1080;">
 
-                
                 <div th:if="${error}" class="toast show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true">
                     <div class="toast-header text-white bg-danger">
                         <i class="fa-solid fa-bomb"></i> <strong class="me-auto"> [[${error}]]</strong>
@@ -90,7 +94,6 @@
                     </div>
                 </div>
 
-                
                 <div th:if="${todoOk}" class="toast show" role="status" aria-live="polite" aria-atomic="true" data-bs-autohide="true">
                     <div class="toast-header text-white bg-success">
                         <i class="fa-solid fa-square-check"></i> <strong class="me-auto"> Éxito</strong>
@@ -106,7 +109,6 @@
             </div>
         </section>
 
-        
         <footer th:fragment="footer" class="bg-dark text-white mt-5 p-4 text-center">
             <div class="container">
                 <p>2026 Autos Caribe. Todos los derechos reservados.</p>

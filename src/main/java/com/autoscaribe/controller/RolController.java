@@ -36,7 +36,9 @@ public class RolController {
         model.addAttribute("roles", roles);
         model.addAttribute("totalRoles", roles.size());
         model.addAttribute("rol", new Rol());
-        return "/rol/listado";
+        
+     
+        return "rol/listado"; 
     }
 
     @PostMapping("/guardar")
@@ -69,6 +71,8 @@ public class RolController {
             return "redirect:/rol/listado";
         }
         model.addAttribute("rol", rolOpt.get());
-        return "/rol/modifica";
+        
+
+        return "rol/modifica"; 
     }
 }

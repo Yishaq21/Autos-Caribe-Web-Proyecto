@@ -27,7 +27,8 @@
                             <div class="modal-body">
                                 <div class="mb-3">
                                     <label>[[#{role.rol}]]</label>
-                                    <input type="text" th:field="*{nombre}" maxlength="20" class="form-control" required="true" placeholder="Ej: ROLE_ADMIN"/>
+                                    <!-- CORRECCIÓN: th:field="*{rol}" -->
+                                    <input type="text" th:field="*{rol}" maxlength="20" class="form-control" required="true" placeholder="Ej: ROLE_ADMIN"/>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -44,7 +45,6 @@
             </div>
         </section>
 
-        
         <section th:fragment="listado" class="p-3">
             <div class="row p-3">
                 <div class="col-md-9">
@@ -63,12 +63,13 @@
                                     <tbody>
                                         <tr th:each="r : ${roles}">
                                             <td th:text="${r.idRol}"></td>
-                                            <td th:text="${r.nombre}"></td>
+                                
+                                            <td th:text="${r.rol}"></td>
                                             <td>
                                                 <button type="button" class="btn btn-danger"
                                                         data-bs-toggle="modal" data-bs-target="#confirmModal"
                                                         th:data-bs-id="${r.idRol}"
-                                                        th:data-bs-descripcion="${r.nombre}">
+                                                        th:data-bs-descripcion="${r.rol}">
                                                     <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
                                                 </button>
                                                 <a th:href="@{/rol/modificar/} + ${r.idRol}" class="btn btn-warning">
@@ -95,7 +96,6 @@
             </div>
         </section>
 
-        
         <section th:fragment="editar">
             <div class="row">
                 <div class="col-md-2"></div>
@@ -122,7 +122,8 @@
                                     <div class="card-body">
                                         <div class="mb-3">
                                             <label>[[#{role.rol}]]</label>
-                                            <input type="text" th:field="*{nombre}" maxlength="20" class="form-control" required="true"/>
+                                            <!-- CORRECCIÓN: th:field="*{rol}" -->
+                                            <input type="text" th:field="*{rol}" maxlength="20" class="form-control" required="true"/>
                                         </div>
                                     </div>
                                 </div>
@@ -133,7 +134,6 @@
             </div>
         </section>
 
-        
         <section th:fragment="confirmarEliminar">
             <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
