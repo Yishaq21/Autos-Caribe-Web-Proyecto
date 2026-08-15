@@ -106,3 +106,15 @@ select * from usuario;
 UPDATE autoscaribe_db.usuario_rol 
 SET id_rol = 1 
 WHERE id_usuario = 1;
+
+CREATE TABLE imagen_vehiculo (
+  id_imagen INT AUTO_INCREMENT PRIMARY KEY,
+  id_vehiculo INT NOT NULL,
+  ruta_imagen VARCHAR(1024) NOT NULL,
+  orden INT DEFAULT 0,
+  FOREIGN KEY (id_vehiculo) REFERENCES vehiculo(id_vehiculo) ON DELETE CASCADE
+);
+
+INSERT INTO imagen_vehiculo (id_vehiculo, ruta_imagen, orden) VALUES
+(1, 'https://commons.wikimedia.org/wiki/Special:FilePath/2024%20Toyota%20Corolla%20LE.jpg?width=900', 0),
+(2, 'https://commons.wikimedia.org/wiki/Special:FilePath/2025%20Hyundai%20Tucson%20au%20SIAM%202025.jpg?width=900', 0);

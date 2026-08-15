@@ -1,6 +1,7 @@
 package com.autoscaribe.controller;
 
 import com.autoscaribe.domain.Vehiculo;
+import com.autoscaribe.service.ImagenVehiculoService;
 import com.autoscaribe.service.VehiculoService;
 import java.util.Locale;
 import java.util.Optional;
@@ -19,10 +20,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class VehiculoController {
 
     private final VehiculoService vehiculoService;
+    private final ImagenVehiculoService imagenVehiculoService;
     private final MessageSource messageSource;
 
-    public VehiculoController(VehiculoService vehiculoService, MessageSource messageSource) {
+    public VehiculoController(VehiculoService vehiculoService,
+            ImagenVehiculoService imagenVehiculoService,
+            MessageSource messageSource) {
         this.vehiculoService = vehiculoService;
+        this.imagenVehiculoService = imagenVehiculoService;
         this.messageSource = messageSource;
     }
 
@@ -35,6 +40,7 @@ public class VehiculoController {
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
         model.addAttribute("vehiculo", new Vehiculo());
+        model.addAttribute("imagenes", java.util.Collections.emptyList());
         return "/vehiculo/modifica";
     }
 
@@ -53,6 +59,7 @@ public class VehiculoController {
             return "redirect:/vehiculo/listado";
         }
         model.addAttribute("vehiculo", vehiculoOpt.get());
+        model.addAttribute("imagenes", imagenVehiculoService.getImagenes(idVehiculo));
         return "/vehiculo/modifica";
     }
 
@@ -65,5 +72,38 @@ public class VehiculoController {
             redirectAttributes.addFlashAttribute("error", "Error al eliminar el vehículo");
         }
         return "redirect:/vehiculo/listado";
+    }
+
+    @PostMapping("/{idVehiculo}/imagenes/agregar")
+    public String agregarImagen(@PathVariable("idVehiculo") Integer idVehiculo,
+            @RequestParam String rutaImagen,
+            RedirectAttributes redirectAttributes) {
+
+        Optional<Vehiculo> vehiculoOpt = vehiculoService.getVehiculo(idVehiculo);
+        if (vehiculoOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Vehículo no encontrado");
+            return "redirect:/vehiculo/listado";
+        }
+        if (rutaImagen == null || rutaImagen.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Debe indicar la dirección de la imagen");
+            return "redirect:/vehiculo/modificar/" + idVehiculo;
+        }
+
+        imagenVehiculoService.agregar(vehiculoOpt.get(), rutaImagen);
+        redirectAttributes.addFlashAttribute("todoOk", "Imagen agregada correctamente");
+        return "redirect:/vehiculo/modificar/" + idVehiculo;
+    }
+
+    @PostMapping("/imagenes/eliminar")
+    public String eliminarImagen(@RequestParam Integer idImagen,
+            @RequestParam Integer idVehiculo,
+            RedirectAttributes redirectAttributes) {
+        try {
+            imagenVehiculoService.eliminar(idImagen);
+            redirectAttributes.addFlashAttribute("todoOk", "Imagen eliminada correctamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al eliminar la imagen");
+        }
+        return "redirect:/vehiculo/modificar/" + idVehiculo;
     }
 }

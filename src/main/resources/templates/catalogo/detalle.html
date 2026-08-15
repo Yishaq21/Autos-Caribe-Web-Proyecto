@@ -15,6 +15,14 @@
                      class="bg-secondary-subtle d-flex justify-content-center align-items-center h-100" style="min-height:380px">
                     <i class="fa-solid fa-car-side fa-7x text-secondary"></i>
                 </div>
+
+                <div class="row row-cols-4 g-2 p-2" th:if="${imagenes != null and !#lists.isEmpty(imagenes)}">
+                    <div class="col" th:each="img : ${imagenes}">
+                        <img th:src="${img.rutaImagen}" class="w-100 rounded" style="height:70px;object-fit:cover;cursor:pointer"
+                             alt="Vista adicional del vehículo"
+                             onclick="document.querySelector('.col-lg-6 > img').src = this.src"/>
+                    </div>
+                </div>
             </div>
             <div class="col-lg-6">
                 <div class="card-body p-4 p-lg-5">

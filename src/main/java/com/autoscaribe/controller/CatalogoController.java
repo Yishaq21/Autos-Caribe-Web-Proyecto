@@ -1,6 +1,7 @@
 package com.autoscaribe.controller;
 
 import com.autoscaribe.service.CatalogoService;
+import com.autoscaribe.service.ImagenVehiculoService;
 import java.math.BigDecimal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,9 +14,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CatalogoController {
 
     private final CatalogoService catalogoService;
+    private final ImagenVehiculoService imagenVehiculoService;
 
-    public CatalogoController(CatalogoService catalogoService) {
+    public CatalogoController(CatalogoService catalogoService,
+            ImagenVehiculoService imagenVehiculoService) {
         this.catalogoService = catalogoService;
+        this.imagenVehiculoService = imagenVehiculoService;
     }
 
     @GetMapping({"/", "/catalogo"})
@@ -77,6 +81,7 @@ public class CatalogoController {
             return "redirect:/catalogo";
         }
         model.addAttribute("vehiculo", vehiculo.get());
+        model.addAttribute("imagenes", imagenVehiculoService.getImagenes(idVehiculo));
         return "catalogo/detalle";
     }
 

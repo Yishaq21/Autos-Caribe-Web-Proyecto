@@ -54,11 +54,11 @@
                     <div class="mb-3"><label>Precio:</label><input type="number" step="0.01" th:field="*{precio}" class="form-control"/></div>
                     <div class="mb-3"><label>Descripción:</label><textarea th:field="*{descripcion}" class="form-control"></textarea></div>
                     <div class="mb-3">
-                        <label>Imagen del vehículo:</label>
+                        <label>Imagen principal:</label>
                         <input type="text" th:field="*{rutaImagen}" class="form-control"
                                placeholder="Ej. https://sitio.com/vehiculo.jpg o /images/vehiculo.jpg"/>
                         <div class="form-text">
-                            Pegue la dirección de una imagen o use una imagen guardada en static/images.
+                            Esta es la imagen que se muestra en el catálogo y en la tarjeta del vehículo.
                         </div>
                     </div>
                     <div class="mb-3" th:if="${vehiculo.rutaImagen != null and !vehiculo.rutaImagen.isBlank()}">
@@ -69,6 +69,45 @@
                     <button type="submit" class="btn btn-success">Guardar</button>
                     <a th:href="@{/vehiculo/listado}" class="btn btn-secondary">Cancelar</a>
                 </form>
+
+                <div class="p-4 border border-top-0" th:if="${vehiculo.idVehiculo != null}">
+                    <h5>Galería de imágenes adicionales</h5>
+                    <p class="text-muted small">Estas imágenes se muestran en la galería del detalle del vehículo en el catálogo.</p>
+
+                    <form th:action="@{/vehiculo/{id}/imagenes/agregar(id=${vehiculo.idVehiculo})}" method="post" class="row g-2 align-items-end mb-3">
+                        <div class="col-sm-9">
+                            <label class="form-label">Dirección de la imagen</label>
+                            <input type="text" name="rutaImagen" class="form-control"
+                                   placeholder="https://sitio.com/otra-vista.jpg" required/>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="submit" class="btn btn-primary w-100">Agregar imagen</button>
+                        </div>
+                    </form>
+
+                    <div th:if="${imagenes == null or #lists.isEmpty(imagenes)}" class="text-muted">
+                        Este vehículo aún no tiene imágenes adicionales.
+                    </div>
+
+                    <div class="row row-cols-2 row-cols-md-4 g-3" th:unless="${imagenes == null or #lists.isEmpty(imagenes)}">
+                        <div class="col" th:each="img : ${imagenes}">
+                            <div class="card h-100">
+                                <img th:src="${img.rutaImagen}" class="card-img-top" style="height:120px;object-fit:cover;" alt="Imagen del vehículo"/>
+                                <div class="card-body p-2 text-center">
+                                    <form th:action="@{/vehiculo/imagenes/eliminar}" method="post">
+                                        <input type="hidden" name="idImagen" th:value="${img.idImagen}"/>
+                                        <input type="hidden" name="idVehiculo" th:value="${vehiculo.idVehiculo}"/>
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar esta imagen?');">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 border border-top-0 text-muted small" th:if="${vehiculo.idVehiculo == null}">
+                    Guarde el vehículo primero para poder agregar imágenes adicionales a la galería.
+                </div>
             </div>
         </section>
 
