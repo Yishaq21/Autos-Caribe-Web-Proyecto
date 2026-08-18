@@ -1,26 +1,50 @@
-<<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>Formulario de Rol - Autos Caribe</title>
-        <link th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}" rel="stylesheet">
-    </head>
-    <body class="bg-light">
-        <div class="container mt-4">
-            <h2 th:text="${rolForm.idRol == null} ? 'Nuevo Rol' : 'Editar Rol'"></h2>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
 
-            <form th:action="@{/admin/roles/guardar}" th:object="${rolForm}" method="post" class="bg-white p-4 rounded shadow-sm">
-                <input type="hidden" th:field="*{idRol}">
+    <!-- Inyectamos el menú de navegación -->
+    <header th:replace="~{general/fragmentos :: header}"></header>
 
-                <div class="mb-3">
-                    <label class="form-label">Nombre del Rol</label>
-                    <input type="text" class="form-control" th:field="*{rol}" placeholder="Ej: ADMINISTRADOR" required>
-                    <span class="text-danger" th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}"></span>
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white text-center">
+                        <!-- Título dinámico: Nuevo o Editar -->
+                        <h4>
+                            <i class="fa-solid fa-id-badge"></i> 
+                            <span th:text="${rolForm.idRol == null} ? #{rol.nuevo} : #{rol.editar}"></span>
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        
+                        <form th:action="@{/rol/guardar}" th:object="${rolForm}" method="post" class="was-validated">
+                            <input type="hidden" th:field="*{idRol}">
+                            
+                            <!-- Token de seguridad CSRF -->
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                            <div class="mb-3">
+                                <label class="form-label" th:text="#{rol.nombre}"></label>
+                                <input type="text" class="form-control" th:field="*{rol}" th:placeholder="#{rol.placeholder}" required="true">
+                                <span class="text-danger" th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}"></span>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-dark" th:text="#{accion.guardar}"></button>
+                                <a th:href="@{/rol/listado}" class="btn btn-secondary" th:text="#{accion.cancelar}"></a>
+                            </div>
+                        </form>
+                        
+                    </div>
                 </div>
-
-                <button type="submit" class="btn btn-dark">Guardar</button>
-                <a th:href="@{/admin/roles}" class="btn btn-secondary">Cancelar</a>
-            </form>
+            </div>
         </div>
-    </body>
+    </div>
+
+    <!-- Inyectamos el footer -->
+    <footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+</body>
 </html>

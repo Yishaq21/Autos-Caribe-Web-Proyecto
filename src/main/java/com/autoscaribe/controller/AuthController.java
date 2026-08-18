@@ -17,10 +17,12 @@ public class AuthController {
 
     private final UsuarioService usuarioService;
 
+    // Inyecta el servicio de usuarios
     public AuthController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
+    // Muestra la pagina de login
     @GetMapping("/login")
     public String login() {
         return "auth/login";
@@ -29,42 +31,35 @@ public class AuthController {
     // Muestra el formulario de registro
     @GetMapping("/registro")
     public String nuevo(Model model) {
-        // Cambiamos "usuarioForm" por "usuario"
         model.addAttribute("usuario", new Usuario());
         return "auth/registro";
     }
 
     // Procesa el formulario de registro
-// Procesa el formulario de registro
     @PostMapping("/registro/guardar")
     public String guardar(@Valid @ModelAttribute("usuario") Usuario usuario,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             Model model) {
 
-        // 🚨 AQUÍ ESTÁ EL TRUCO PARA VER QUÉ FALLA
+        // Si hay errores, vuelve al formulario
         if (bindingResult.hasErrors()) {
-            System.out.println("========== ERRORES DE VALIDACIÓN ==========");
-            bindingResult.getFieldErrors().forEach(err -> {
-                System.out.println("Campo fallido: '" + err.getField() + "' - Motivo: " + err.getDefaultMessage());
-            });
-            System.out.println("===========================================");
-
-            // Le pasamos un mensaje a la vista para que no falle en silencio
-            model.addAttribute("error", "Revisa los datos. Hay un error de validación interno.");
             return "auth/registro";
         }
 
         try {
+            // Guarda el nuevo usuario
             usuarioService.registrar(usuario);
             redirectAttributes.addFlashAttribute("todoOk", "Su cuenta fue creada exitosamente. Ya puede iniciar sesión.");
             return "redirect:/login";
         } catch (DataIntegrityViolationException | IllegalStateException e) {
+            // Si hay error (ej: usuario ya existe), muestra el mensaje
             model.addAttribute("error", e.getMessage());
             return "auth/registro";
         }
     }
 
+    // Muestra la pagina de acceso denegado
     @GetMapping("/acceso_denegado")
     public String accesoDenegado() {
         return "auth/acceso_denegado";

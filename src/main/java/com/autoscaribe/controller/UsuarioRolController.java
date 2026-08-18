@@ -20,12 +20,13 @@ public class UsuarioRolController {
     private final UsuarioService usuarioService;
     private final RolService rolService;
 
+    // Inyecta los servicios de usuario y rol
     public UsuarioRolController(UsuarioService usuarioService, RolService rolService) {
         this.usuarioService = usuarioService;
         this.rolService = rolService;
     }
 
-    // 1. Carga la pantalla inicial solo con la lista de usuarios para seleccionar
+    // Muestra la pantalla inicial con la lista de usuarios
     @GetMapping("/mantenimiento")
     public String mantenimiento(Model model) {
         model.addAttribute("usuarios", usuarioService.getUsuarios(true));
@@ -33,11 +34,12 @@ public class UsuarioRolController {
         return "usuario_rol/mantenimiento";
     }
 
-    // 2. Al elegir un usuario y darle "Buscar Roles", carga sus checkboxes marcados
+    // Al elegir un usuario, carga sus roles marcados
     @PostMapping("/consultar")
     public String consultar(@RequestParam("idUsuario") Integer idUsuario, Model model) {
         Optional<Usuario> usuarioOpt = usuarioService.getUsuario(idUsuario);
 
+        // Si el usuario no existe, vuelve al inicio
         if (usuarioOpt.isEmpty()) {
             return "redirect:/usuario_rol/mantenimiento";
         }
@@ -45,11 +47,10 @@ public class UsuarioRolController {
         model.addAttribute("usuarios", usuarioService.getUsuarios(true));
         model.addAttribute("rolesDisponibles", rolService.getRoles());
         model.addAttribute("usuarioSeleccionado", usuarioOpt.get());
-
         return "usuario_rol/mantenimiento";
     }
 
-    // 3. Guarda los checkboxes que el administrador dejó marcados
+    // Guarda los roles que el administrador marcó
     @PostMapping("/guardar")
     public String guardar(
             @RequestParam("idUsuario") Integer idUsuario,
@@ -60,7 +61,7 @@ public class UsuarioRolController {
             usuarioService.actualizarRoles(idUsuario, idRoles);
             redirectAttributes.addFlashAttribute("todoOk", "Los permisos del usuario se actualizaron correctamente.");
         } catch (IllegalArgumentException e) {
-            // Si intenta dejarlo sin roles, le mostramos el error
+            // Si hay error (ej: sin roles), muestra el mensaje
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 

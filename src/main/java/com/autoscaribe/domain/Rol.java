@@ -9,8 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
-
 @Data
 @Entity
 @Table(name = "rol")
@@ -18,11 +16,13 @@ public class Rol implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    // Llave primaria autoincremental
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_rol")
     private Integer idRol;
 
+    // Nombre del rol (único y obligatorio)
     @NotBlank
     @Column(name = "rol", unique = true, length = 20)
     private String rol;

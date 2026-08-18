@@ -10,22 +10,18 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Este servicio se encarga de traer la lista de rutas protegidas
- * desde la base de datos. El SecurityConfig usa esta lista para saber
- * qué rol necesita cada URL del sistema
- */
+// Servicio que trae las rutas protegidas desde la BD
 @Service
 public class RutaService {
 
     private final RutaRepository rutaRepository;
 
+    // Inyecta el repositorio de rutas
     public RutaService(RutaRepository rutaRepository) {
         this.rutaRepository = rutaRepository;
     }
 
-    // Trae todas las rutas ordenadas: primero las públicas (requiereRol = false)
-    // luego las que sí necesitan un rol específico
+    // Trae todas las rutas ordenadas (primero las públicas)
     @Transactional(readOnly = true)
     public List<Ruta> getRutas() {
         return rutaRepository.findAllByOrderByRequiereRolAsc();

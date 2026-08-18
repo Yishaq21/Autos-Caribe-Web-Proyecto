@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-/**
- * Controlador para que el ADMINISTRADOR gestione roles 
- */
+// Controlador para que el administrador gestione los roles
 @Controller
 @RequestMapping("/rol")
 public class RolController {
@@ -25,22 +23,23 @@ public class RolController {
     private final RolService rolService;
     private final MessageSource messageSource;
 
+    // Inyecta el servicio de roles y el de mensajes
     public RolController(RolService rolService, MessageSource messageSource) {
         this.rolService = rolService;
         this.messageSource = messageSource;
     }
 
+    // Muestra la lista de todos los roles
     @GetMapping("/listado")
     public String listado(Model model) {
         var roles = rolService.getRoles();
         model.addAttribute("roles", roles);
         model.addAttribute("totalRoles", roles.size());
-        model.addAttribute("rol", new Rol());
-        
-     
-        return "rol/listado"; 
+        model.addAttribute("rol", new Rol()); // Para el formulario de nuevo rol
+        return "rol/listado";
     }
 
+    // Guarda un rol nuevo o editado
     @PostMapping("/guardar")
     public String guardar(@Valid Rol rol, RedirectAttributes redirectAttributes) {
         rolService.save(rol);
@@ -49,30 +48,36 @@ public class RolController {
         return "redirect:/rol/listado";
     }
 
+    // Elimina un rol por su id
     @PostMapping("/eliminar")
     public String eliminar(@RequestParam Integer idRol, RedirectAttributes redirectAttributes) {
         String titulo = "todoOk";
         String detalle = "mensaje.eliminado";
+
         try {
             rolService.delete(idRol);
         } catch (IllegalArgumentException | IllegalStateException e) {
+            // Si no se puede eliminar, muestra error
             titulo = "error";
             detalle = "error";
         }
+
         redirectAttributes.addFlashAttribute(titulo, messageSource.getMessage(detalle, null, Locale.getDefault()));
         return "redirect:/rol/listado";
     }
 
+    // Muestra el formulario para modificar un rol
     @GetMapping("/modificar/{idRol}")
     public String modificar(@PathVariable("idRol") Integer idRol, Model model, RedirectAttributes redirectAttributes) {
         Optional<Rol> rolOpt = rolService.getRol(idRol);
+
+        // Si el rol no existe, vuelve al listado con error
         if (rolOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", messageSource.getMessage("error", null, Locale.getDefault()));
             return "redirect:/rol/listado";
         }
-        model.addAttribute("rol", rolOpt.get());
-        
 
-        return "rol/modifica"; 
+        model.addAttribute("rol", rolOpt.get());
+        return "rol/modifica";
     }
 }

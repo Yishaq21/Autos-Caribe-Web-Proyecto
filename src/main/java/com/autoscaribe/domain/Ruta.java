@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.autoscaribe.domain;
 
 import jakarta.persistence.*;
@@ -15,14 +11,19 @@ public class Ruta implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    // Llave primaria 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_ruta")
     private Integer idRuta;
 
+    // URL de la ruta (ejemplo: /usuario/listado)
     private String ruta;
+
+    // true = necesita un rol para entrar
     private boolean requiereRol;
 
+    // Relación con el rol requerido
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol")
     private Rol rol;

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.autoscaribe;
 
 import com.autoscaribe.domain.Ruta;
@@ -18,46 +14,45 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * Esta clase configura toda la seguridad del sistema
+ * Configura toda la seguridad del sistema.
  */
 @Configuration
 public class SecurityConfig {
 
-    // Este método arma qué puede ver cada quien.
-    // @Lazy evita un problema de dependencias circulares al arrancar la app.
+    // Define qué rutas puede ver cada usuario según su rol.@Lazy evita errores de dependencias circulares al iniciar
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy RutaService rutaService) throws Exception {
-
+        
+        // Trae todas las rutas desde la base de datos
         var rutas = rutaService.getRutas();
-        System.out.println("========== RUTAS CARGADAS AL ARRANCAR ==========");
-        for (var r : rutas) {
-            System.out.println(r.getRuta() + " | requiereRol=" + r.isRequiereRol());
-        }
-        System.out.println("==================================================");
-
-http.authorizeHttpRequests(request -> {
+        // Configura los permisos de cada ruta
+        http.authorizeHttpRequests(request -> {
             for (Ruta ruta : rutas) {
                 if (ruta.isRequiereRol()) {
-                    String dbRol = ruta.getRol().getRol(); // Trae el rol de la BD 
-                
+                    // Obtiene el rol desde la BD
+                    String dbRol = ruta.getRol().getRol();
+                    // Quita el prefijo "ROLE_" si lo tiene
                     if (dbRol.startsWith("ROLE_")) {
                         dbRol = dbRol.substring(5);
                     }
-                    
-   
+
+                    // Si el rol es ADMIN, solo admin puede entrar
                     if (dbRol.equals("ADMIN")) {
                         request.requestMatchers(ruta.getRuta()).hasRole("ADMIN");
                     } else {
-
+                        // Otros roles: ese rol o ADMIN pueden entrar
                         request.requestMatchers(ruta.getRuta()).hasAnyRole(dbRol, "ADMIN");
                     }
                 } else {
+                    // Si no requiere rol, cualquiera puede entrar
                     request.requestMatchers(ruta.getRuta()).permitAll();
                 }
             }
+            // Cualquier otra ruta necesita estar logueado
             request.anyRequest().authenticated();
         });
-        // Configuración del formulario de login: usa nuestra propia
+
+        // Configura el formulario de login
         http.formLogin(login -> login
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
@@ -66,28 +61,26 @@ http.authorizeHttpRequests(request -> {
                 .permitAll()
         );
 
-        // Configuración del logout: al cerrar sesión, borra la sesión
+        // Configura el cierre de sesión
         http.logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout=true")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
         );
-
-        // Si alguien intenta entrar a una ruta sin el rol necesario,
-        // lo manda a una página de "acceso denegado"
+        // Si no tiene permiso, lo manda a esta pagina
         http.exceptionHandling(ex -> ex.accessDeniedPage("/acceso_denegado"));
-
         return http.build();
     }
 
-    // Define el algoritmo para encriptar contraseñas (BCrypt).
+    // Define como se encriptan las contraseñas (BCrypt)
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Le dice a Spring Security que use nuestro UsuarioDetailsService para validar cada intento de login.
+    // Le dice a Spring que use nuestro servicio de usuarios y el codificador de contraseñas para validar el login
     @Autowired
     public void configurerGlobal(AuthenticationManagerBuilder build,
             @Lazy PasswordEncoder passwordEncoder,

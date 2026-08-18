@@ -22,9 +22,10 @@
                         <div class="modal-header bg-info text-white">
                             <h1 class="modal-title fs-5" id="exampleModalLabel">
                                 <i class="fa-solid fa-user-plus"></i> [[#{usuario.agregar}]]</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{accion.cerrar}"></button>
                         </div>
                         <form th:action="@{/usuario/guardar}" th:object="${usuario}" class="was-validated" enctype="multipart/form-data" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                             <div class="modal-body">
                                 <div class="mb-3">
                                     <label>[[#{usuario.username}]]</label>
@@ -57,7 +58,7 @@
                                 <div class="mb-3">
                                     <label>[[#{usuario.imagen}]]</label>
                                     <input type="file" name="imagenFile" onchange="mostrarImagen(this);" class="form-control"/>
-                                    <img id="blah" src="#" alt="imagen de usuario" height="200"/>
+                                    <img id="blah" src="#" th:alt="#{usuario.imagen.alt}" height="200"/>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -102,20 +103,16 @@
                                             <td>[[${u.apellidos}]]</td>
                                             <td>[[${u.correo}]]</td>
                                             <td>
-                                                <span th:if="${u.activo}" class="badge bg-success">
-                                                    Activo
-                                                </span>
-                                                <span th:unless="${u.activo}" class="badge bg-secondary">
-                                                    Inactivo
-                                                </span>
+                                                <span th:if="${u.activo}" class="badge bg-success" th:text="#{usuario.estado.activo}"></span>
+                                                <span th:unless="${u.activo}" class="badge bg-secondary" th:text="#{usuario.estado.inactivo}"></span>
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-warning text-dark"
                                                         data-bs-toggle="modal" data-bs-target="#confirmModal"
                                                         th:data-bs-id="${u.idUsuario}"
                                                         th:data-bs-descripcion="${u.username}">
-                                                    <i class="fa-solid fa-user-slash"></i> Desactivar
-                                                </button>                                          
+                                                    <i class="fa-solid fa-user-slash"></i> [[#{accion.desactivar}]]
+                                                </button>                                        
                                                 <a th:href="@{/usuario/modificar/} + ${u.idUsuario}" class="btn btn-warning">
                                                     <i class="fas fa-pencil-alt"></i> [[#{accion.actualizar}]]
                                                 </a>                                                
@@ -148,6 +145,7 @@
                     <form method="POST" th:action="@{/usuario/guardar}" th:object="${usuario}" class="was-validated" enctype="multipart/form-data">
                         <input type="hidden" name="idUsuario" th:field="*{idUsuario}"/>
                         <input type="hidden" name="rutaImagen" th:field="*{rutaImagen}"/>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
                         <div class="row py-4 mb-4 bg-light">
                             <div class="col-md-4 d-grid">
@@ -197,7 +195,7 @@
                                         <div class="mb-3">
                                             <label for="imagen">[[#{usuario.imagen}]]</label>
                                             <input class="form-control" type="file" name="imagenFile" onchange="mostrarImagen(this);" />
-                                            <img id="blah" th:src="@{${usuario.rutaImagen}}" alt="your image" height="200"/>
+                                            <img id="blah" th:src="@{${usuario.rutaImagen}}" th:alt="#{usuario.imagen.alt}" height="200"/>
                                         </div>
                                     </div>
                                 </div>
@@ -216,19 +214,21 @@
                         
                         <form th:action="@{/usuario/desactivar}" method="post">
                             <input type="hidden" name="idUsuario" id="modalId"/>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
                             <div class="modal-header bg-warning text-dark">
                                 <h5 class="modal-title" id="modalLabel">
-                                    <i class="fa-solid fa-user-slash"></i> Confirmar Desactivación
+                                    <i class="fa-solid fa-user-slash"></i> [[#{accion.confirmar.desactivacion}]]
                                 </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{accion.cerrar}"></button>
                             </div>
                             <div class="modal-body">
-                                <p>¿Realmente desea desactivar al usuario <span id="modalDescripcion" class="fw-bold"></span>?</p>
-                                <h6>El usuario no será borrado, pero ya no podrá iniciar sesión en el sistema.</h6>
+                                <p>[[#{accion.confirmar.texto.desactivar1}]] <span id="modalDescripcion" class="fw-bold"></span>?</p>
+                                <h6>[[#{accion.confirmar.texto.desactivar2}]]</h6>
                             </div>
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-warning text-dark">
-                                    <i class="fa-solid fa-user-slash"></i> Desactivar
+                                    <i class="fa-solid fa-user-slash"></i> [[#{accion.desactivar}]]
                                 </button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                     <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
@@ -239,11 +239,14 @@
                 </div>
             </div>
         </section>
+
         <section th:fragment="perfil">
             <div class="row">
                 <div class="col-md-3"></div>
                 <div class="col-md-6">
                     <form method="POST" th:action="@{/usuario/perfil/actualizar}" th:object="${usuario}" class="was-validated">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        
                         <div class="card mt-4">
                             <div class="card-header"><h4>[[#{usuario.miperfil}]]</h4></div>
                             <div class="card-body">
