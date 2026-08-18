@@ -46,7 +46,7 @@ public class UsuarioService {
         if (usuarioRepository.existsByUsernameOrCorreo(usuario.getUsername(), usuario.getCorreo())) {
             throw new DataIntegrityViolationException("El usuario o correo ya está en uso.");
         }
-        
+
         // 1. Se encripta el password antes de guardar 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuario.setActivo(true);
@@ -55,7 +55,7 @@ public class UsuarioService {
         Rol rolCliente = rolRepository.findByRol("CLIENTE")
                 .orElseThrow(() -> new IllegalStateException("El rol CLIENTE no existe. Créalo primero en /rol/listado."));
         usuario.getRoles().add(rolCliente);
-        
+
         // 3. Se guarda en la base de datos una única vez con sus roles ya cargados
         usuarioRepository.save(usuario);
     }
@@ -81,15 +81,51 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+@Transactional
+    public void desactivar(Integer idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario con ID " + idUsuario + " no existe."));
+
+        usuario.setActivo(false);
+        usuarioRepository.save(usuario);
+    }
+
     @Transactional
-    public void delete(Integer idUsuario) {
-        if (!usuarioRepository.existsById(idUsuario)) {
-            throw new IllegalArgumentException("El usuario con ID " + idUsuario + " no existe!");
+    public void actualizarPerfil(Integer idUsuario, String nombre, String apellidos, String correo, String telefono) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+
+        if (!usuario.getCorreo().equalsIgnoreCase(correo)
+                && usuarioRepository.existsByUsernameOrCorreo(usuario.getUsername(), correo)) {
+            throw new DataIntegrityViolationException("Ese correo ya está en uso por otra cuenta.");
         }
-        try {
-            usuarioRepository.deleteById(idUsuario);
-        } catch (DataIntegrityViolationException e) {
-            throw new IllegalStateException("No se puede eliminar el usuario, tiene información asociada");
+
+        usuario.setNombre(nombre);
+        usuario.setApellidos(apellidos);
+        usuario.setCorreo(correo);
+        usuario.setTelefono(telefono);
+        usuarioRepository.save(usuario);
+    }
+    @Transactional
+    public void actualizarRoles(Integer idUsuario, java.util.List<Integer> idRoles) {
+        // Validamos que el administrador no deje al usuario sin ningún rol por error
+        if (idRoles == null || idRoles.isEmpty()) {
+            throw new IllegalArgumentException("El usuario debe tener al menos un rol asignado.");
         }
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+
+        // Limpiamos los roles actuales
+        usuario.getRoles().clear();
+
+        // Agregamos los roles que vienen marcados 
+        for (Integer idRol : idRoles) {
+            Rol rol = rolRepository.findById(idRol)
+                    .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado."));
+            usuario.getRoles().add(rol);
+        }
+
+        usuarioRepository.save(usuario);
     }
 }

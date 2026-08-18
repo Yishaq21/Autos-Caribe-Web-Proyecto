@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
     <body>
-        <section th:fragment="asignacion" class="py-4 mb-4 bg-light">
+<section th:fragment="asignacion" class="py-4 mb-4 bg-light">
             <div class="container">
                 <div class="row">
                     <div class="col-md-8 mx-auto">
@@ -15,9 +15,9 @@
                             <div class="card-body">
                                 <form th:action="@{/usuario_rol/consultar}" method="POST">
                                     <div class="mb-3">
-                                        <label for="idUsuario" class="form-label">Usuario:</label>
+                                        <label for="idUsuario" class="form-label" th:text="#{usuario.username} + ':'"></label>
                                         <select class="form-select" name="idUsuario" id="idUsuario" required="true">
-                                            <option value="" disabled="true" th:selected="${usuarioSeleccionado == null}">-- Seleccione un usuario --</option>
+                                            <option value="" disabled="true" th:selected="${usuarioSeleccionado == null}" th:text="'-- ' + #{solicitud.seleccione} + ' --'"></option>
                                             <option th:each="u : ${usuarios}" 
                                                     th:value="${u.idUsuario}" 
                                                     th:text="${u.nombre + ' ' + u.apellidos}"
@@ -28,7 +28,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-search"></i> Buscar Roles
+                                                <i class="fas fa-search"></i> [[#{accion.buscar}]]
                                             </button>
                                         </div>
                                     </div>
@@ -39,7 +39,7 @@
                         <!-- Formulario para asignar/guardar los roles -->
                         <div class="card" th:if="${usuarioSeleccionado != null}">
                             <div class="card-header bg-success text-white">
-                                <h4><i class="fas fa-user-shield"></i> Roles del Usuario: [[${usuarioSeleccionado.nombre}]]</h4>
+                                <h4><i class="fas fa-user-shield"></i> [[#{plantilla.roles_usuario}]]: [[${usuarioSeleccionado.nombre}]]</h4>
                             </div>
                             <div class="card-body">
                                 <form th:action="@{/usuario_rol/guardar}" method="POST">
@@ -52,7 +52,6 @@
                                                    th:value="${rol.idRol}" 
                                                    th:id="${'rol_' + rol.idRol}"
                                                    th:checked="${usuarioSeleccionado.roles.contains(rol)}" />
-                                            <!-- CORRECCIÓN: Se cambió rol.nombre por rol.rol -->
                                             <label class="form-check-label" th:for="${'rol_' + rol.idRol}">
                                                 [[${rol.rol}]]
                                             </label>
@@ -62,14 +61,14 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <button type="submit" class="btn btn-success">
-                                                <i class="fas fa-save"></i> Guardar
+                                                <i class="fas fa-save"></i> [[#{accion.guardar}]]
                                             </button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
-
+                        
                     </div>
                 </div>
             </div>

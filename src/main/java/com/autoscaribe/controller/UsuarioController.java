@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * Controlador para que el ADMINISTRADOR gestione usuarios 
+ * Controlador para que el ADMINISTRADOR gestione usuarios
  */
 @Controller
 @RequestMapping("/usuario")
@@ -55,21 +55,17 @@ public class UsuarioController {
         return "redirect:/usuario/listado";
     }
 
-    // Elimina un usuario (si no tiene datos asociados)
-    @PostMapping("/eliminar")
-    public String eliminar(@RequestParam Integer idUsuario, RedirectAttributes redirectAttributes) {
-        String titulo = "todoOk";
-        String detalle = "mensaje.eliminado";
+// Desactiva un usuario en lugar de eliminarlo físicamente
+    @PostMapping("/desactivar")
+    public String desactivar(@RequestParam Integer idUsuario, RedirectAttributes redirectAttributes) {
         try {
-            usuarioService.delete(idUsuario);
+            usuarioService.desactivar(idUsuario);
+            // Usamos tu messageSource, asegúrate de tener "usuario.desactivado" en tu messages.properties
+            redirectAttributes.addFlashAttribute("todoOk", 
+                    messageSource.getMessage("usuario.desactivado", null, Locale.getDefault()));
         } catch (IllegalArgumentException e) {
-            titulo = "error";
-            detalle = "usuario.error01"; // usuario no existe
-        } catch (IllegalStateException e) {
-            titulo = "error";
-            detalle = "usuario.error02"; // tiene datos asociados
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        redirectAttributes.addFlashAttribute(titulo, messageSource.getMessage(detalle, null, Locale.getDefault()));
         return "redirect:/usuario/listado";
     }
 
@@ -87,5 +83,43 @@ public class UsuarioController {
         usuario.setPassword("");
         model.addAttribute("usuario", usuario);
         return "/usuario/modifica";
+    }
+
+    private Usuario getUsuarioLogueado() {
+        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return null;
+        }
+        return usuarioService.getUsuarioPorUsername(auth.getName()).orElse(null);
+    }
+
+    @GetMapping("/perfil")
+    public String perfil(Model model) {
+        Usuario usuario = getUsuarioLogueado();
+        if (usuario == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("usuario", usuario);
+        return "/usuario/perfil";
+    }
+
+    @PostMapping("/perfil/actualizar")
+    public String actualizarPerfil(@RequestParam String nombre,
+            @RequestParam String apellidos,
+            @RequestParam String correo,
+            @RequestParam(required = false) String telefono,
+            RedirectAttributes redirectAttributes) {
+        Usuario usuario = getUsuarioLogueado();
+        if (usuario == null) {
+            return "redirect:/login";
+        }
+        try {
+            usuarioService.actualizarPerfil(usuario.getIdUsuario(), nombre, apellidos, correo, telefono);
+            redirectAttributes.addFlashAttribute("todoOk",
+                    messageSource.getMessage("mensaje.actualizado", null, Locale.getDefault()));
+        } catch (DataIntegrityViolationException | IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/usuario/perfil";
     }
 }

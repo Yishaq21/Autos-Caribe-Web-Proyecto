@@ -35,14 +35,26 @@ public class AuthController {
     }
 
     // Procesa el formulario de registro
+// Procesa el formulario de registro
     @PostMapping("/registro/guardar")
     public String guardar(@Valid @ModelAttribute("usuario") Usuario usuario,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             Model model) {
+
+        // 🚨 AQUÍ ESTÁ EL TRUCO PARA VER QUÉ FALLA
         if (bindingResult.hasErrors()) {
+            System.out.println("========== ERRORES DE VALIDACIÓN ==========");
+            bindingResult.getFieldErrors().forEach(err -> {
+                System.out.println("Campo fallido: '" + err.getField() + "' - Motivo: " + err.getDefaultMessage());
+            });
+            System.out.println("===========================================");
+
+            // Le pasamos un mensaje a la vista para que no falle en silencio
+            model.addAttribute("error", "Revisa los datos. Hay un error de validación interno.");
             return "auth/registro";
         }
+
         try {
             usuarioService.registrar(usuario);
             redirectAttributes.addFlashAttribute("todoOk", "Su cuenta fue creada exitosamente. Ya puede iniciar sesión.");

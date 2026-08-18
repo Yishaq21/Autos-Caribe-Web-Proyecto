@@ -33,7 +33,7 @@
                                     <i class="fa-solid fa-car-side"></i> Catálogo
                                 </a>
                             </li>
-                          
+
                             <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                                 <a class="nav-link" th:href="@{/vehiculo/listado}">
                                     <i class="fa-solid fa-warehouse"></i> Vehículos
@@ -64,6 +64,11 @@
                             <li class="nav-item" sec:authorize="isAuthenticated()">
                                 <a class="nav-link" th:href="@{/solicitud/listado}">
                                     <i class="fa-solid fa-paper-plane"></i> Solicitudes
+                                </a>
+                            </li>
+                            <li class="nav-item" sec:authorize="isAuthenticated()">
+                                <a class="nav-link" th:href="@{/usuario/perfil}">
+                                    <i class="fa-solid fa-user"></i> Mi Perfil
                                 </a>
                             </li>
                             <li class="nav-item" sec:authorize="isAuthenticated()">

@@ -29,25 +29,34 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy RutaService rutaService) throws Exception {
 
         var rutas = rutaService.getRutas();
-
-        // AGREGAR temporalmente estas líneas para depurar
         System.out.println("========== RUTAS CARGADAS AL ARRANCAR ==========");
         for (var r : rutas) {
             System.out.println(r.getRuta() + " | requiereRol=" + r.isRequiereRol());
         }
         System.out.println("==================================================");
 
-        http.authorizeHttpRequests(request -> {
+http.authorizeHttpRequests(request -> {
             for (Ruta ruta : rutas) {
                 if (ruta.isRequiereRol()) {
-                    request.requestMatchers(ruta.getRuta()).hasRole(ruta.getRol().getRol());
+                    String dbRol = ruta.getRol().getRol(); // Trae el rol de la BD 
+                
+                    if (dbRol.startsWith("ROLE_")) {
+                        dbRol = dbRol.substring(5);
+                    }
+                    
+   
+                    if (dbRol.equals("ADMIN")) {
+                        request.requestMatchers(ruta.getRuta()).hasRole("ADMIN");
+                    } else {
+
+                        request.requestMatchers(ruta.getRuta()).hasAnyRole(dbRol, "ADMIN");
+                    }
                 } else {
                     request.requestMatchers(ruta.getRuta()).permitAll();
                 }
             }
             request.anyRequest().authenticated();
         });
-
         // Configuración del formulario de login: usa nuestra propia
         http.formLogin(login -> login
                 .loginPage("/login")

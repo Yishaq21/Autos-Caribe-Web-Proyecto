@@ -1,12 +1,12 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
     <head th:replace="~{general/fragmentos :: head}"></head>
 
     <body>
-        
+
         <section th:fragment="agregar">
-            
+
             <div class='row py-4 mb-2 bg-light'>
                 <div class='col-md-1'></div>
                 <div class='col-md-3'>
@@ -15,7 +15,7 @@ DOCTYPE html>
                     </button>
                 </div>
             </div>
-            
+
             <div class="modal fade" id="agregarUsuarioModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -74,7 +74,7 @@ DOCTYPE html>
             </div>
         </section>
 
-        
+
         <section th:fragment="listado" class="p-3">
             <div class="row p-3">
                 <div class="col-md-9">
@@ -101,14 +101,21 @@ DOCTYPE html>
                                             <td>[[${u.nombre}]]</td>
                                             <td>[[${u.apellidos}]]</td>
                                             <td>[[${u.correo}]]</td>
-                                            <td th:text="${u.activo} ? #{texto.si} : #{texto.no}"></td>
                                             <td>
-                                                <button type="button" class="btn btn-danger"
+                                                <span th:if="${u.activo}" class="badge bg-success">
+                                                    Activo
+                                                </span>
+                                                <span th:unless="${u.activo}" class="badge bg-secondary">
+                                                    Inactivo
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-warning text-dark"
                                                         data-bs-toggle="modal" data-bs-target="#confirmModal"
                                                         th:data-bs-id="${u.idUsuario}"
                                                         th:data-bs-descripcion="${u.username}">
-                                                    <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
-                                                </button>                                            
+                                                    <i class="fa-solid fa-user-slash"></i> Desactivar
+                                                </button>                                          
                                                 <a th:href="@{/usuario/modificar/} + ${u.idUsuario}" class="btn btn-warning">
                                                     <i class="fas fa-pencil-alt"></i> [[#{accion.actualizar}]]
                                                 </a>                                                
@@ -133,7 +140,7 @@ DOCTYPE html>
             </div>
         </section>
 
-        
+
         <section th:fragment="editar">
             <div class="row">
                 <div class="col-md-2"></div>
@@ -141,7 +148,7 @@ DOCTYPE html>
                     <form method="POST" th:action="@{/usuario/guardar}" th:object="${usuario}" class="was-validated" enctype="multipart/form-data">
                         <input type="hidden" name="idUsuario" th:field="*{idUsuario}"/>
                         <input type="hidden" name="rutaImagen" th:field="*{rutaImagen}"/>
-                        
+
                         <div class="row py-4 mb-4 bg-light">
                             <div class="col-md-4 d-grid">
                                 <a th:href="@{/usuario/listado}" class="btn btn-primary">
@@ -201,26 +208,27 @@ DOCTYPE html>
             </div>
         </section>
 
-        
+
         <section th:fragment="confirmarEliminar">
             <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered custom-modal-animation">
                     <div class="modal-content animate-slide-up">
-                        <form th:action="@{/usuario/eliminar}" method="post">
+                        
+                        <form th:action="@{/usuario/desactivar}" method="post">
                             <input type="hidden" name="idUsuario" id="modalId"/>
-                            <div class="modal-header bg-warning text-white">
+                            <div class="modal-header bg-warning text-dark">
                                 <h5 class="modal-title" id="modalLabel">
-                                    <i class="fa-solid fa-circle-radiation"></i> [[#{accion.confirmar}]]
+                                    <i class="fa-solid fa-user-slash"></i> Confirmar Desactivación
                                 </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                             </div>
                             <div class="modal-body">
-                                <p>[[#{accion.confirmar.texto1}]] <span id="modalDescripcion"></span>?</p>
-                                <h6>[[#{accion.confirmar.texto2}]]</h6>
+                                <p>¿Realmente desea desactivar al usuario <span id="modalDescripcion" class="fw-bold"></span>?</p>
+                                <h6>El usuario no será borrado, pero ya no podrá iniciar sesión en el sistema.</h6>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                                <button type="submit" class="btn btn-warning text-dark">
+                                    <i class="fa-solid fa-user-slash"></i> Desactivar
                                 </button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                     <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
@@ -228,6 +236,45 @@ DOCTYPE html>
                             </div>
                         </form>
                     </div>
+                </div>
+            </div>
+        </section>
+        <section th:fragment="perfil">
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <form method="POST" th:action="@{/usuario/perfil/actualizar}" th:object="${usuario}" class="was-validated">
+                        <div class="card mt-4">
+                            <div class="card-header"><h4>[[#{usuario.miperfil}]]</h4></div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label>[[#{usuario.username}]]</label>
+                                    <input type="text" th:value="*{username}" class="form-control" disabled="disabled"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label>[[#{usuario.nombre}]]</label>
+                                    <input type="text" name="nombre" th:field="*{nombre}" maxlength="20" class="form-control" required="true"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label>[[#{usuario.apellidos}]]</label>
+                                    <input type="text" name="apellidos" th:field="*{apellidos}" maxlength="30" class="form-control" required="true"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label>[[#{usuario.correo}]]</label>
+                                    <input type="email" name="correo" th:field="*{correo}" maxlength="75" class="form-control" required="true"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label>[[#{usuario.telefono}]]</label>
+                                    <input type="tel" name="telefono" th:field="*{telefono}" maxlength="25" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="card-footer d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>
