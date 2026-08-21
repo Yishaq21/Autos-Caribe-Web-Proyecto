@@ -67,6 +67,15 @@
                             </li>
                         </ul>
                         <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-globe"></i> <span th:text="#{menu.idioma}">Idioma</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="?lang=es">Español</a></li>
+                                    <li><a class="dropdown-item" href="?lang=en">English</a></li>
+                                </ul>
+                            </li>
                             <li class="nav-item" sec:authorize="isAnonymous()">
                                 <a class="nav-link btn btn-outline-light btn-sm px-3 text-white" th:href="@{/login}" th:text="#{login.boton.ingresar}"></a>
                             </li>

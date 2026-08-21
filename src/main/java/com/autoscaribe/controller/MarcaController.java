@@ -9,6 +9,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,13 +36,18 @@ public class MarcaController {
         var marcas = marcaService.getMarcas();
         model.addAttribute("marcas", marcas);
         model.addAttribute("totalMarcas", marcas.size());
-        model.addAttribute("marca", new Marca()); // Para el formulario de nueva marca
+        model.addAttribute("marcaForm", new Marca()); // Para el formulario de nueva marca
         return "marca/listado";
     }
 
     // Guarda una marca nueva o editada
+    // Se usa "marcaForm" como nombre del atributo del modelo (en vez del nombre por defecto "marca")
+    // porque coincide con el nombre de la propiedad "marca" dentro de la entidad Marca. Cuando ambos
+    // nombres son iguales, Spring MVC interpreta el único parámetro "marca" del formulario como si
+    // fuera el objeto Marca completo (intentando buscarlo por id) en lugar de asignarlo a la propiedad,
+    // lo que provocaba el error "Failed to convert value of type 'String' to required type 'Marca'".
     @PostMapping("/guardar")
-    public String guardar(@Valid Marca marca, RedirectAttributes redirectAttributes) {
+    public String guardar(@ModelAttribute("marcaForm") @Valid Marca marca, RedirectAttributes redirectAttributes) {
         try {
             marcaService.save(marca);
             redirectAttributes.addFlashAttribute("todoOk",
@@ -77,7 +83,8 @@ public class MarcaController {
             return "redirect:/marca/listado";
         }
 
-        model.addAttribute("marca", marcaOpt.get());
+        model.addAttribute("marcaForm", marcaOpt.get());
         return "marca/modifica";
     }
 }
+

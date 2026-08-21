@@ -23,7 +23,7 @@
                                 <i class="fa-solid fa-tags"></i> [[#{marca.agregar}]]</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{accion.cerrar}"></button>
                         </div>
-                        <form th:action="@{/marca/guardar}" th:object="${marca}" class="was-validated" method="post">
+                        <form th:action="@{/marca/guardar}" th:object="${marcaForm}" class="was-validated" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                             <div class="modal-body">
                                 <div class="mb-3">
@@ -100,7 +100,7 @@
             <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
-                    <form method="POST" th:action="@{/marca/guardar}" th:object="${marca}" class="was-validated">
+                    <form method="POST" th:action="@{/marca/guardar}" th:object="${marcaForm}" class="was-validated">
                         <input type="hidden" th:field="*{idMarca}"/>
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 

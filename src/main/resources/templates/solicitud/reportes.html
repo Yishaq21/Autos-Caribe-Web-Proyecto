@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body>
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="fa-solid fa-chart-column"></i> Reporte de solicitudes</h2>
+            <p class="text-muted mb-0" th:text="${reporteVendedor ? 'Resumen de las solicitudes asignadas a su usuario.' : 'Resumen general de solicitudes del sistema.'}"></p>
+        </div>
+        <a th:href="@{/solicitud/listado}" class="btn btn-outline-secondary">Volver</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3"><div class="card text-center shadow-sm h-100"><div class="card-body"><div class="text-muted">Total</div><div class="fs-2 fw-bold" th:text="${total}"></div></div></div></div>
+        <div class="col-md-3"><div class="card text-center shadow-sm h-100"><div class="card-body"><div class="text-muted">Pendientes</div><div class="fs-2 fw-bold text-warning" th:text="${pendientes}"></div></div></div></div>
+        <div class="col-md-3"><div class="card text-center shadow-sm h-100"><div class="card-body"><div class="text-muted">Aceptadas</div><div class="fs-2 fw-bold text-success" th:text="${aceptadas}"></div></div></div></div>
+        <div class="col-md-3"><div class="card text-center shadow-sm h-100"><div class="card-body"><div class="text-muted">Rechazadas</div><div class="fs-2 fw-bold text-danger" th:text="${rechazadas}"></div></div></div></div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header"><strong>Solicitudes por vehículo</strong></div>
+                <div class="card-body">
+                    <table class="table table-sm" th:if="${solicitudesPorVehiculo != null and !solicitudesPorVehiculo.empty}">
+                        <thead><tr><th>Vehículo</th><th class="text-end">Cantidad</th></tr></thead>
+                        <tbody>
+                        <tr th:each="item : ${solicitudesPorVehiculo}">
+                            <td th:text="${item.key}"></td>
+                            <td class="text-end" th:text="${item.value}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <p class="text-muted" th:if="${solicitudesPorVehiculo == null or solicitudesPorVehiculo.empty}">No hay datos para mostrar.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-header"><strong>Últimas solicitudes</strong></div>
+                <div class="card-body table-responsive">
+                    <table class="table table-sm table-hover" th:if="${solicitudes != null and !solicitudes.empty}">
+                        <thead><tr><th>Vehículo</th><th>Cliente</th><th>Estado</th><th>Fecha</th></tr></thead>
+                        <tbody>
+                        <tr th:each="s,iter : ${solicitudes}" th:if="${iter.index &lt; 10}">
+                            <td th:text="${s.vehiculo.marca + ' ' + s.vehiculo.modelo}"></td>
+                            <td th:text="${s.cliente.nombre + ' ' + s.cliente.apellidos}"></td>
+                            <td th:text="${s.estado}"></td>
+                            <td th:text="${#temporals.format(s.fechaSolicitud, 'dd/MM/yyyy')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <p class="text-muted" th:if="${solicitudes == null or solicitudes.empty}">No hay solicitudes registradas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+</body>
+</html>

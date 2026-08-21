@@ -9,6 +9,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,13 +36,13 @@ public class CategoriaController {
         var categorias = categoriaService.getCategorias();
         model.addAttribute("categorias", categorias);
         model.addAttribute("totalCategorias", categorias.size());
-        model.addAttribute("categoria", new Categoria()); // Para el formulario de nueva categoría
+        model.addAttribute("categoriaForm", new Categoria()); // Para el formulario de nueva categoría
         return "categoria/listado";
     }
 
-    // Guarda una categoría nueva o editada
+
     @PostMapping("/guardar")
-    public String guardar(@Valid Categoria categoria, RedirectAttributes redirectAttributes) {
+    public String guardar(@ModelAttribute("categoriaForm") @Valid Categoria categoria, RedirectAttributes redirectAttributes) {
         try {
             categoriaService.save(categoria);
             redirectAttributes.addFlashAttribute("todoOk",
@@ -77,7 +78,7 @@ public class CategoriaController {
             return "redirect:/categoria/listado";
         }
 
-        model.addAttribute("categoria", categoriaOpt.get());
+        model.addAttribute("categoriaForm", categoriaOpt.get());
         return "categoria/modifica";
     }
 }

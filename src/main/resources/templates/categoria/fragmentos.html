@@ -23,7 +23,7 @@
                                 <i class="fa-solid fa-layer-group"></i> [[#{categoria.agregar}]]</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{accion.cerrar}"></button>
                         </div>
-                        <form th:action="@{/categoria/guardar}" th:object="${categoria}" class="was-validated" method="post">
+                        <form th:action="@{/categoria/guardar}" th:object="${categoriaForm}" class="was-validated" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                             <div class="modal-body">
                                 <div class="mb-3">
@@ -100,7 +100,7 @@
             <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
-                    <form method="POST" th:action="@{/categoria/guardar}" th:object="${categoria}" class="was-validated">
+                    <form method="POST" th:action="@{/categoria/guardar}" th:object="${categoriaForm}" class="was-validated">
                         <input type="hidden" th:field="*{idCategoria}"/>
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
