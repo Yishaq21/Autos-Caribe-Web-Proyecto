@@ -1,7 +1,9 @@
 package com.autoscaribe.controller;
 
 import com.autoscaribe.service.CatalogoService;
+import com.autoscaribe.service.CategoriaService;
 import com.autoscaribe.service.ImagenVehiculoService;
+import com.autoscaribe.service.MarcaService;
 import java.math.BigDecimal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,11 +17,17 @@ public class CatalogoController {
 
     private final CatalogoService catalogoService;
     private final ImagenVehiculoService imagenVehiculoService;
+    private final MarcaService marcaService;
+    private final CategoriaService categoriaService;
 
     public CatalogoController(CatalogoService catalogoService,
-            ImagenVehiculoService imagenVehiculoService) {
+            ImagenVehiculoService imagenVehiculoService,
+            MarcaService marcaService,
+            CategoriaService categoriaService) {
         this.catalogoService = catalogoService;
         this.imagenVehiculoService = imagenVehiculoService;
+        this.marcaService = marcaService;
+        this.categoriaService = categoriaService;
     }
 
     @GetMapping({"/", "/catalogo"})
@@ -98,5 +106,7 @@ public class CatalogoController {
         if (!model.containsAttribute("precioMaximo")) {
             model.addAttribute("precioMaximo", "");
         }
+        model.addAttribute("marcas", marcaService.getMarcas());
+        model.addAttribute("categorias", categoriaService.getCategorias());
     }
 }

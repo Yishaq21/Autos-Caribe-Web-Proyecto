@@ -13,4 +13,12 @@ public interface VehiculoRepository extends JpaRepository<Vehiculo, Integer> {
 
     List<Vehiculo> findByPrecioBetweenOrderByPrecioAsc(BigDecimal precioMinimo,
             BigDecimal precioMaximo);
+
+    // Indica si existe algún vehículo registrado con esa marca (para no dejar
+    // eliminar una marca del catálogo mientras siga en uso)
+    boolean existsByMarcaIgnoreCase(String marca);
+
+    // Indica si existe algún vehículo registrado con esa categoría (para no dejar
+    // eliminar una categoría del catálogo mientras siga en uso)
+    boolean existsByCategoriaIgnoreCase(String categoria);
 }

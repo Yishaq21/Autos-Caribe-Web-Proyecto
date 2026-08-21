@@ -47,9 +47,29 @@
             <div class="container mt-4">
                 <form th:action="@{/vehiculo/guardar}" th:object="${vehiculo}" method="post" class="p-4 border">
                     <input type="hidden" th:field="*{idVehiculo}" />
-                    <div class="mb-3"><label>Marca:</label><input type="text" th:field="*{marca}" class="form-control" required/></div>
+                    <div class="mb-3">
+                        <label>Marca:</label>
+                        <select th:field="*{marca}" class="form-select" required>
+                            <option value="">Seleccione una marca...</option>
+                            <option th:each="m : ${marcas}" th:value="${m.marca}" th:text="${m.marca}"></option>
+                        </select>
+                        <div class="form-text">
+                            ¿No encuentra la marca? Puede
+                            <a th:href="@{/marca/listado}" target="_blank">agregarla aquí</a>.
+                        </div>
+                    </div>
                     <div class="mb-3"><label>Modelo:</label><input type="text" th:field="*{modelo}" class="form-control" required/></div>
-                    <div class="mb-3"><label>Categoría:</label><input type="text" th:field="*{categoria}" class="form-control"/></div>
+                    <div class="mb-3">
+                        <label>Categoría:</label>
+                        <select th:field="*{categoria}" class="form-select">
+                            <option value="">Sin categoría</option>
+                            <option th:each="c : ${categorias}" th:value="${c.categoria}" th:text="${c.categoria}"></option>
+                        </select>
+                        <div class="form-text">
+                            ¿No encuentra la categoría? Puede
+                            <a th:href="@{/categoria/listado}" target="_blank">agregarla aquí</a>.
+                        </div>
+                    </div>
                     <div class="mb-3"><label>Año:</label><input type="number" th:field="*{año}" class="form-control"/></div>
                     <div class="mb-3"><label>Precio:</label><input type="number" step="0.01" th:field="*{precio}" class="form-control"/></div>
                     <div class="mb-3"><label>Descripción:</label><textarea th:field="*{descripcion}" class="form-control"></textarea></div>

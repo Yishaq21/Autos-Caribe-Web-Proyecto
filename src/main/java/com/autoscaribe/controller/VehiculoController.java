@@ -1,7 +1,9 @@
 package com.autoscaribe.controller;
 
 import com.autoscaribe.domain.Vehiculo;
+import com.autoscaribe.service.CategoriaService;
 import com.autoscaribe.service.ImagenVehiculoService;
+import com.autoscaribe.service.MarcaService;
 import com.autoscaribe.service.VehiculoService;
 import java.util.Locale;
 import java.util.Optional;
@@ -21,13 +23,19 @@ public class VehiculoController {
 
     private final VehiculoService vehiculoService;
     private final ImagenVehiculoService imagenVehiculoService;
+    private final MarcaService marcaService;
+    private final CategoriaService categoriaService;
     private final MessageSource messageSource;
 
     public VehiculoController(VehiculoService vehiculoService,
             ImagenVehiculoService imagenVehiculoService,
+            MarcaService marcaService,
+            CategoriaService categoriaService,
             MessageSource messageSource) {
         this.vehiculoService = vehiculoService;
         this.imagenVehiculoService = imagenVehiculoService;
+        this.marcaService = marcaService;
+        this.categoriaService = categoriaService;
         this.messageSource = messageSource;
     }
 
@@ -41,6 +49,7 @@ public class VehiculoController {
     public String nuevo(Model model) {
         model.addAttribute("vehiculo", new Vehiculo());
         model.addAttribute("imagenes", java.util.Collections.emptyList());
+        prepararListas(model);
         return "/vehiculo/modifica";
     }
 
@@ -60,7 +69,15 @@ public class VehiculoController {
         }
         model.addAttribute("vehiculo", vehiculoOpt.get());
         model.addAttribute("imagenes", imagenVehiculoService.getImagenes(idVehiculo));
+        prepararListas(model);
         return "/vehiculo/modifica";
+    }
+
+    // Agrega al modelo las marcas y categorías gestionadas, para llenar los
+    // menús desplegables del formulario de vehículos
+    private void prepararListas(Model model) {
+        model.addAttribute("marcas", marcaService.getMarcas());
+        model.addAttribute("categorias", categoriaService.getCategorias());
     }
 
     @PostMapping("/eliminar")

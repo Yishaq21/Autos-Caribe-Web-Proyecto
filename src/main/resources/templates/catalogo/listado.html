@@ -18,8 +18,11 @@
                 <form th:action="@{/catalogo/buscar}" method="get">
                     <label class="form-label" for="marca">Buscar por marca</label>
                     <input id="marca" class="form-control mb-2" type="text"
-                           name="marca" th:value="${marca}"
+                           name="marca" th:value="${marca}" list="listaMarcas"
                            placeholder="Ej. Toyota">
+                    <datalist id="listaMarcas">
+                        <option th:each="m : ${marcas}" th:value="${m.marca}"></option>
+                    </datalist>
                     <button class="btn btn-primary w-100" type="submit">
                         <i class="fa-solid fa-magnifying-glass"></i> Buscar marca
                     </button>
@@ -29,9 +32,12 @@
             <div class="col-lg-4">
                 <form th:action="@{/catalogo/categoria}" method="get">
                     <label class="form-label" for="categoria">Filtrar por categoría</label>
-                    <input id="categoria" class="form-control mb-2" type="text"
-                           name="categoria" th:value="${categoria}"
-                           placeholder="Ej. Sedán, SUV o Pickup">
+                    <select id="categoria" class="form-select mb-2" name="categoria">
+                        <option value="" th:selected="${categoria == null or categoria.isEmpty()}">Todas las categorías</option>
+                        <option th:each="c : ${categorias}" th:value="${c.categoria}"
+                                th:text="${c.categoria}"
+                                th:selected="${categoria != null and categoria.equalsIgnoreCase(c.categoria)}"></option>
+                    </select>
                     <button class="btn btn-primary w-100" type="submit">
                         <i class="fa-solid fa-filter"></i> Filtrar categoría
                     </button>

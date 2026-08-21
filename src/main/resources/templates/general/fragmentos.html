@@ -51,6 +51,16 @@
                                 </a>
                             </li>
                             <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                                <a class="nav-link" th:href="@{/marca/listado}">
+                                    <i class="fa-solid fa-tags"></i> <span th:text="#{menu.marcas}"></span>
+                                </a>
+                            </li>
+                            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                                <a class="nav-link" th:href="@{/categoria/listado}">
+                                    <i class="fa-solid fa-layer-group"></i> <span th:text="#{menu.categorias}"></span>
+                                </a>
+                            </li>
+                            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                                 <a class="nav-link" th:href="@{/usuario_rol/mantenimiento}">
                                     <i class="fa-solid fa-user-shield"></i> <span th:text="#{menu.permisos}"></span>
                                 </a>
